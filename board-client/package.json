@@ -1,5 +1,5 @@
 {
-  "name": "board-klient",
+  "name": "board-client",
   "version": "1.0.0",
   "description": "",
   "main": "move.js",

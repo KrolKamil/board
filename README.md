@@ -4,7 +4,7 @@ This  small project shows how to use WebSocket for real time DOM manipulation.
 
 ## Installing And Running
 
-####Client:
+#### Client:
 1. cd board-client
 2. npm install
 3. npm run dev
