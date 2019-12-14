@@ -53,8 +53,6 @@ class Pawn extends EventEmitter {
   }
 
   clientUpdatePosition = (newTop, newLeft) => {
-    console.log(newTop);
-    console.log(newLeft);
     let topToUpdate = this.state.top;
     let leftToUpdate = this.state.left;
     if ((newTop >= 0) && (newTop <= 445)) {
@@ -106,6 +104,7 @@ class Pawn extends EventEmitter {
   }
 
   serverUpdateState = (newState) => {
+    console.log(newState);
       this.setState(newState);
       if(this.occupied === false){
         this.updatePosition(this.state.top, this.state.left);

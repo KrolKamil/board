@@ -37,7 +37,6 @@ const setPosition = (payload) => {
 const handleNewMessage = async (message) => {
   try {
     const parsedMessage = await JSON.parse(message);
-    // console.log(parsedMessage);
     switch (parsedMessage.type) {
       case 'occupied':
         setOccupied(parsedMessage.payload);
@@ -59,10 +58,16 @@ const getStringStorage = () => {
   return stringifiedState;
 };
 
+const broadcast = (message) => {
+  wss.clients.forEach((client) => {
+    client.send(message);
+  });
+};
+
 wss.on('connection', (ws) => {
   ws.on('message', async (message) => {
     await handleNewMessage(message);
-    ws.send(getStringStorage());
+    broadcast(getStringStorage());
   });
 
   ws.send(getStringStorage());
