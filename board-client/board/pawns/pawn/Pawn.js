@@ -14,6 +14,7 @@ class Pawn extends EventEmitter {
     this.oldY = 0;
 
     this.container.addEventListener('mousedown', this.startMoveing);
+    this.container.addEventListener('touchstart', this.startMoveingMobile);
   }
 
   startMoveing = (e) => {
@@ -25,6 +26,19 @@ class Pawn extends EventEmitter {
       this.oldY = e.clientY;
       document.addEventListener('mouseup', this.stopMoveing);
       document.addEventListener('mousemove', this.move);
+      this.sendOccupied();
+    }
+  }
+
+  startMoveingMobile = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    if(this.state.occupied === false){
+      this.occupied = true;
+      this.oldX = e.changedTouches[0].pageX;
+      this.oldY = e.changedTouches[0].pageY;
+      document.addEventListener('touchend', this.stopMoveingMobile);
+      document.addEventListener('touchmove', this.moveMobile);
       this.sendOccupied();
     }
   }
@@ -51,6 +65,18 @@ class Pawn extends EventEmitter {
     const newLeft = this.container.offsetLeft - this.newX;
     this.clientUpdatePosition(newTop, newLeft);
   }
+
+  moveMobile = (e) => {
+    e.preventDefault();
+    this.newX = this.oldX - e.changedTouches[0].pageX;
+    this.newY = this.oldY - e.changedTouches[0].pageY;
+    this.oldX = e.changedTouches[0].pageX;
+    this.oldY = e.changedTouches[0].pageY;
+    const newTop = this.container.offsetTop - this.newY;
+    const newLeft = this.container.offsetLeft - this.newX;
+    this.clientUpdatePosition(newTop, newLeft);
+  }
+
 
   clientUpdatePosition = (newTop, newLeft) => {
     let topToUpdate = this.state.top;
@@ -91,6 +117,14 @@ class Pawn extends EventEmitter {
     this.serverUpdateState(this.state);
   }
 
+  stopMoveingMobile = () => {
+    document.removeEventListener('touchend', this.stopMoveingMobile);
+    document.removeEventListener('touchmove', this.moveMobile);
+    this.occupied = false;
+    this.sendEndOccupied();
+    this.serverUpdateState(this.state);
+  }
+
   sendEndOccupied = () => {
     const message = {
       type: 'occupied',
@@ -104,7 +138,6 @@ class Pawn extends EventEmitter {
   }
 
   serverUpdateState = (newState) => {
-    console.log(newState);
       this.setState(newState);
       if(this.occupied === false){
         this.updatePosition(this.state.top, this.state.left);
