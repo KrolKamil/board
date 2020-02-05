@@ -1,4 +1,4 @@
-# Realt Time manipulating DOM elements
+# Real Time manipulating DOM elements
 
 This  small project shows how to use WebSocket for real time DOM manipulation. 
 
